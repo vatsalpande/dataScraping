@@ -10,9 +10,14 @@
             const result = data && data.result ?  data.result.numFound : null;
             if (result != null ) {
                 const allResult = [];
-            const tableData = [];
-            tableData.push(`<table id = "response" class="display nowrap" cellspacing="0" width="100%">`);
-            tableData.push(`<thead>
+                // <tbody>
+                //
+                // </tbody>
+                // </table>`
+                const resultSuccess = function resultSuccess() {
+                    const tableData = [];
+                    tableData.push(`<table id = "response" class="display nowrap" cellspacing="0" width="100%">`);
+                    tableData.push(`<thead>
                 <tr>
                 <th>Name</th>
                 <th>Available Sizes</th>
@@ -36,12 +41,6 @@
                 <th>Color Family</th>
                 </tr>
                 </tfoot>`);
-
-                // <tbody>
-                //
-                // </tbody>
-                // </table>`
-                const resultSuccess = function resultSuccess() {
                     const result = [...arguments]
                         .filter(item => item.length >0 && item[0])
                         .map(item => JSON.parse(JSON.stringify(item[0])))
@@ -95,7 +94,7 @@
                             </tr>
                         `
                     }).join("");
-tableData.push(`<tbody>${resultString}</tbody>`)
+                    tableData.push(`<tbody>${resultString}</tbody>`)
 
                     $("#details").html(tableData.join(""));
                     $("#response").DataTable({
@@ -111,6 +110,7 @@ tableData.push(`<tbody>${resultString}</tbody>`)
                 const resultFailure = function resultFailure(err) {
                     console.info ('Inside failure');
                     console.info ({err});
+                    alert('Some error occured. No results to be shown');
                 }
                 const resultAlways = function resultAlways() {
 
@@ -137,6 +137,7 @@ tableData.push(`<tbody>${resultString}</tbody>`)
 
     const totalRecordsFailure = function totalRecordsFailure(err) {
         console.info ('Inside error');
+        alert ('Some problem. Try again. No results this time');
     }
 
     const totalRecordsAlways = function totalRecordsAlways() {

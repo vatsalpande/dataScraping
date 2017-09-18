@@ -11,8 +11,32 @@
             if (result != null ) {
                 const allResult = [];
                 const resultSuccess = function resultSuccess() {
-
-                    const resultItemObj = {};
+                    const tableData = [];
+                    tableData.push(`<table id = "response" class="display nowrap" cellspacing="0" width="100%">`);
+                    tableData.push(`<thead>
+                <tr>
+                <th>Name</th>
+                <th>Available Sizes</th>
+                <th>Price</th>
+                <th>Special Price</th>
+                <th>Max Price</th>
+                <th>Saving Percent</th>
+                <th>Brand</th>
+                <th>Color Family</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                <th>Name</th>
+                <th>Available Sizes</th>
+                <th>Price</th>
+                <th>Special Price</th>
+                <th>Max Price</th>
+                <th>Saving Percent</th>
+                <th>Brand</th>
+                <th>Color Family</th>
+                </tr>
+                </tfoot>`);
                     const result = [...arguments]
                         .filter(item => item.length >0 && item[0])
                         .map(item => JSON.parse(JSON.stringify(item[0])))
@@ -22,59 +46,67 @@
                                     return item;
                                 })
                                 .forEach(resultItem => {
-                                    resultItem = resultItem.replace("\n", "");
-                                    // resultItem = { + resultItem;
-                                    resultItem = `{"data":${resultItem}`;
-                                    const resultData = JSON.parse(resultItem);
-                                    console.info (resultData);
-                                    const availableSize = resultData.available_sizes.map(item => item.label).join(", ");
-                                    const prices = resultData.data.price || "Not Available ";
-                                    const name = resultData.data.name || "Not Available ";
-                                    const maxPrice = resultData.data.max_price || "Not Available ";
-                                    const specialPrice = resultData.data.special_price || "Not Available ";
-                                    const savingPercent = resultData.data.max_saving_percentage;
-                                    const brand = resultData.data.brand ||  "Not Available ";
-                                    const colorFamily = resultData.data.color_family ||  "Not Available ";
-                                    //const name =
-                                    allResult.push({
-                                        availableSize,
-                                        prices,
-                                        name,
-                                        maxPrice,
-                                        specialPrice,
-                                        savingPercent,
-                                        brand,
-                                        colorFamily
-                                    });
+                                    try {
+                                        resultItem = resultItem.replace("\n", "");
+                                        // resultItem = { + resultItem;
+                                        resultItem = `{"data":${resultItem}`;
+                                        const resultData = JSON.parse(resultItem);
+                                        const availableSize = resultData.available_sizes.map(item => item.label).join(", ");
+                                        const prices = resultData.data.price || NOT_AVAILABLE;
+                                        const name = resultData.data.name || NOT_AVAILABLE;
+                                        const maxPrice = resultData.data.max_price || NOT_AVAILABLE;
+                                        const specialPrice = resultData.data.special_price ||NOT_AVAILABLE;
+                                        const savingPercent = resultData.data.max_saving_percentage || NOT_AVAILABLE;
+                                        const brand = resultData.data.brand ||  NOT_AVAILABLE;
+                                        const colorFamily = resultData.data.color_family ||  NOT_AVAILABLE;
+                                        //const name =
+                                        allResult.push({
+                                            availableSize,
+                                            prices,
+                                            name,
+                                            maxPrice,
+                                            specialPrice,
+                                            savingPercent,
+                                            brand,
+                                            colorFamily
+                                        });
+                                    }catch(exception) {
+                                        console.info (exception);
+                                    }
+
                                 });
                         });
-
-
                     let resultString = allResult.map(item => {
                         return `
-------------------------------------------------------------------------------------------------------------------------------<br>
-                            Name  - ${item.name} <br>
-                            Available Sizes - ${item.availableSize} <br>
-                            Price - ${item.prices} <br>
-                            Special Price - ${item.specialPrice} <br>
-                            Max Price  - ${item.maxPrice} <br>
-                            Saving Percent - ${item.savingPercent} <br>
-                            Brand =  ${item.brand} <br>
-                            Color Family =  ${item.colorFamily} <br>
---------------------------------------------------------------------------------------------------------------------------------- <br>                           
+<tr>
+                            <td>${item.name}</td>
+                            <td>${item.availableSize}</td>
+                            <td>${item.prices}</td>
+                            <td>${item.specialPrice}</td>
+                            <td>${item.maxPrice}</td>
+                            <td>${item.savingPercent}</td>
+                            <td>${item.brand}</td>
+                            <td>${item.colorFamily}</td>
+                            </tr>
                         `
-                    });
+                    }).join("");
+                    tableData.push(`<tbody>${resultString}</tbody>`)
 
-                    $("#details").html(resultString.join("<br>"));
+                    $("#details").html(tableData.join(""));
+                    $("#response").DataTable({
+                        "paging":   false,
+                        "info":     false,
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'copy', 'csv', 'excel', 'pdf', 'print'
+                        ]
+                    } );
 
-
-                    console.info (allResult);
-                    console.info ('Inside success');
-                    console.info ({resultItemObj})
                 }
                 const resultFailure = function resultFailure(err) {
                     console.info ('Inside failure');
                     console.info ({err});
+                    alert('Some error occured. No results to be shown');
                 }
                 const resultAlways = function resultAlways() {
 
