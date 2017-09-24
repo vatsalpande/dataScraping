@@ -7,8 +7,8 @@ First download
 It will be added to chrome and turn it on 
 
 
-cd Downloads/folderName/zalora
-go to zalora folder and run
+cd Downloads/folderName/prod
+go to prod folder and run
 
 python -m SimpleHTTPServer 8000
 
